@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "paths": {
+    "/getSupportedCurrencies": {
+      "name": "/getSupportedCurrencies",
+      "lambdaFunction": "mylambda",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/addPaymentCard": {
+      "name": "/addPaymentCard",
+      "lambdaFunction": "addPaymentCardFunction",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

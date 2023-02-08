@@ -24,10 +24,26 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.nishandudakia.OxiReactMastercard"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+
+    "plugins": [
+      [
+      "expo-build-properties",
+      {
+        "ios":{
+          "useFrameworks":"static"
+        }
+      }
+    ]
+    ]
+  },
+
+  "react-native-google-mobile-ads": {
+    "ios_app_id": "ca-app-pub-3940256099942544/2934735716"
   }
 }
