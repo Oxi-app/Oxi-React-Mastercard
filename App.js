@@ -1,4 +1,5 @@
-import {Amplify} from "@aws-amplify/core";
+
+import Amplify, {API} from '@aws-amplify/core';
 import { DataStore } from "@aws-amplify/datastore";
 import {React,  useState, useEffect, useRef  } from "react";
 import {StyleSheet, FlatList, Text, TextInput, View, Image, Keyboard,TouchableWithoutFeedback, SafeAreaView, Modal, Alert, Pressable, ScrollView} from "react-native";
@@ -11,6 +12,7 @@ Amplify.configure({
     disabled: true,
   },
 });
+import awsmobile from "./src/aws-exports";
 import awsExports from "./src/aws-exports";
 import { Auth } from "@aws-amplify/auth/lib";
 import { withAuthenticator, Authenticator, SignIn} from 'aws-amplify-react-native/dist/Auth';
@@ -22,18 +24,20 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Sentry from 'sentry-expo';
 import Greetings from "aws-amplify-react-native/dist/Auth/Greetings";
 import { AmplifyTheme } from 'aws-amplify-react-native';
-import mobileAds from 'react-native-google-mobile-ads';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads'
+//import ChartScreen from './chartScreen'
+import CardScreen from "./cardScreen";
+import {BarChart, PieChart} from 'react-native-gifted-charts'
+// import mobileAds from 'react-native-google-mobile-ads';
+// import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads'
 
-mobileAds()
-  .initialize()
-  .then(adapterStatuses => {
-    // Initialization complete!
-  });
+// mobileAds()
+//   .initialize()
+//   .then(adapterStatuses => {
+//     // Initialization complete!
+//   });
 
 
-
-Amplify.configure(awsExports)
+//API.configure(awsmobile)
 
 const HideKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -47,7 +51,7 @@ Sentry.init({
   debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 });
 
-const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-3940256099942544/2934735716';
+// const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-3940256099942544/2934735716';
 
 const Tab = createBottomTabNavigator();
 
@@ -70,10 +74,75 @@ sectionFooterLink: {
 }
 };
 
+
+ const DATA = [
+  {
+    "count": 2,
+    "offset": 1,
+    "limit": 2,
+    "total": 5,
+    "items": [
+      {
+        "transactionMetadata": {
+          "id": "ee421c25-f928-4bf6-b884-3600b76b860d",
+          "retrievalRefNumber": "MCC000100",
+          "processingCode": "00",
+          "authCode": "52717Z",
+          "dateAndTime": "2018-07-02T00:00+00:00",
+          "merchantName": "ABC Store",
+          "acquiringInstitutionCountryCode": "USA",
+          "acquiringInstitutionCode": "12312312312",
+          "amount": "25.50",
+          "currencyCode": "USD",
+          "indicator": "AT"
+        },
+        "transactionFootPrint": {
+          "mcc": 3997,
+          "carbonEmissionInGrams": 48.52,
+          "carbonEmissionInOunces": 1.71,
+          "category": {
+            "mainCategory": "Leisure & Entertainment",
+            "subCategory": "Hotels & Vacation",
+            "sector": "Hotels, Motels & Resorts",
+            "sectorCode": "604"
+          }
+        }
+      },
+      {
+        "transactionMetadata": {
+          "id": "fdc4626c-f51e-4ba6-9728-c79ac1d9aec8",
+          "retrievalRefNumber": "MCC000480",
+          "processingCode": "01",
+          "authCode": "K3C161",
+          "dateAndTime": "2019-12-25T00:00+00:00",
+          "merchantName": "ABC Store",
+          "acquiringInstitutionCountryCode": "USA",
+          "acquiringInstitutionCode": "23423423423",
+          "amount": "3.00",
+          "currencyCode": "USD",
+          "indicator": "CL"
+        },
+        "transactionFootPrint": {
+          "mcc": 5962,
+          "carbonEmissionInGrams": 27.98,
+          "carbonEmissionInOunces": 0.99,
+          "category": {
+            "mainCategory": "Shopping",
+            "subCategory": "Department Store",
+            "sector": "Specialty Retail & Services",
+            "sectorCode": "302"
+          }
+        }
+      },
+    ]
+  }
+];
+
+const {items} = DATA[0]
+
 function HomeScreen({navigation, signOut, user}){
 
   // Defining constants
-
 
   const [month, updateCurrentMonth] = useState(null);
   const [year, updateYear] = useState(null);
@@ -83,7 +152,7 @@ function HomeScreen({navigation, signOut, user}){
   const [instructionsModalVisible, setInstructionsModalVisible] = useState(false);
   const [deletionModalVisible, setDeletionModalVisible] = useState(false);
   const [points, setPoints] = useState(0);
-
+  const [response, updateResponse] = useState('')
 
   const inputRef = useRef();
 
@@ -112,60 +181,80 @@ function HomeScreen({navigation, signOut, user}){
   useEffect(() => {
     dateFormat();
     getUserInfo();
-    getCurrentpoints();
+    //test()
+   // getCurrentpoints();
   }, []);
 
-  const [pointsTotal, updatePointsTotal] = useState(0)
 
-  useEffect(() =>{
 
-    const interval = setInterval(() => {
-      const year = new Date().getFullYear()  
+  // const [pointsTotal, updatePointsTotal] = useState(0)
+
+  // useEffect(() =>{
+
+  //   const interval = setInterval(() => {
+  //     const year = new Date().getFullYear()  
   
-      const month = new Date().getMonth() +1  
+  //     const month = new Date().getMonth() +1  
   
-      const day = new Date().getDate()
+  //     const day = new Date().getDate()
   
-      const hours = new Date().getHours()
+  //     const hours = new Date().getHours()
   
-      const minutes = new Date().getMinutes()
+  //     const minutes = new Date().getMinutes()
   
-      const seconds = new Date().getSeconds()
+  //     const seconds = new Date().getSeconds()
       
   
-      if (day==1 && hours ==0 && minutes==0 && seconds == 0){
+  //     if (day==1 && hours ==0 && minutes==0 && seconds == 0){
   
-        const emissions = 162
-        const amount = 220
+  //       const emissions = 162
+  //       const amount = 220
 
-        const weightedEmissions = emissions/amount
+  //       const weightedEmissions = emissions/amount
 
-        const addedPoints = (-500)*weightedEmissions+1000
+  //       const addedPoints = (-500)*weightedEmissions+1000
          
 
-        async function addPoints(){
-          await DataStore.save(
-            new Points({
-            "Points": addedPoints.toString()
-          })
-        ); 
+  //       async function addPoints(){
+  //         await DataStore.save(
+  //           new Points({
+  //           "Points": addedPoints.toString()
+  //         })
+  //       ); 
 
-          const userSub = (await Auth.currentAuthenticatedUser()).attributes.sub;
-          const pointsArray =(await DataStore.query(Points,(n)=>n.owner.eq(userSub))).map((p)=>p.Points)
-          console.log(pointsArray)
-          const pointsTotal = (pointsArray.map(Number)).reduce((a,v) =>  a = a + v , 0 )
-          updatePointsTotal(pointsTotal.toFixed(0))
-      }
-        addPoints()
-      }
-      else{
-      } 
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [] )
+  //         const userSub = (await Auth.currentAuthenticatedUser()).attributes.sub;
+  //         const pointsArray =(await DataStore.query(Points,(n)=>n.owner.eq(userSub))).map((p)=>p.Points)
+  //         console.log(pointsArray)
+  //         const pointsTotal = (pointsArray.map(Number)).reduce((a,v) =>  a = a + v , 0 )
+  //         updatePointsTotal(pointsTotal.toFixed(0))
+  //     }
+  //       addPoints()
+  //     }
+  //     else{
+  //     } 
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, [] )
 
 
   //async functions
+
+//   async function test(){
+
+//     //  const info = { body: { fpan: ["5344 0351 7122 9750"]  } }
+//     //  await API.post('myapi', '/addPaymentCard', info)
+
+//     const info = { body: {fpan:"5355220691562346"} }
+//     const test =  await API.post('myapi', '/addPaymentCard', info)
+
+// // get request
+// // const items = await API.get('myapi', '/addPaymentCard')
+
+// updateResponse(JSON.stringify(test))
+
+//   }
+
+  //console.log(response)
 
   async function getUserInfo() {
     const userFirstName = (await Auth.currentAuthenticatedUser()).attributes.name
@@ -174,68 +263,15 @@ function HomeScreen({navigation, signOut, user}){
     updateUserSub(userSub)
   }
 
-  async function getCurrentpoints(){
-    const userSub = (await Auth.currentAuthenticatedUser()).attributes.sub;
-    const pointsArray =(await DataStore.query(Points,(n)=>n.owner.eq(userSub))).map((p)=>p.Points)
-    console.log(pointsArray)
-    const pointsTotal = (pointsArray.map(Number)).reduce((a,v) =>  a = a + v , 0 )
-    updatePointsTotal(pointsTotal.toFixed(0))
-  }
+  // async function getCurrentpoints(){
+  //   const userSub = (await Auth.currentAuthenticatedUser()).attributes.sub;
+  //   const pointsArray =(await DataStore.query(Points,(n)=>n.owner.eq(userSub))).map((p)=>p.Points)
+  //   console.log(pointsArray)
+  //   const pointsTotal = (pointsArray.map(Number)).reduce((a,v) =>  a = a + v , 0 )
+  //   updatePointsTotal(pointsTotal.toFixed(0))
+  // }
 
-  const DATA = [
-        {
-          "transactionMetadata": {
-            "id": "ee421c25-f928-4bf6-b884-3600b76b860d",
-            "retrievalRefNumber": "MCC000100",
-            "processingCode": "00",
-            "authCode": "52717Z",
-            "dateAndTime": "2018-07-02T00:00+00:00",
-            "merchantName": "ABC Store",
-            "acquiringInstitutionCountryCode": "USA",
-            "acquiringInstitutionCode": "12312312312",
-            "amount": "25.50",
-            "currencyCode": "USD",
-            "indicator": "AT"
-          },
-          "transactionFootPrint": {
-            "mcc": 3997,
-            "carbonEmissionInGrams": 48.52,
-            "carbonEmissionInOunces": 1.71,
-            "category": {
-              "mainCategory": "Leisure & Entertainment",
-              "subCategory": "Hotels & Vacation",
-              "sector": "Hotels, Motels & Resorts",
-              "sectorCode": "604"
-            }
-          }
-        },
-        {
-          "transactionMetadata": {
-            "id": "fdc4626c-f51e-4ba6-9728-c79ac1d9aec8",
-            "retrievalRefNumber": "MCC000480",
-            "processingCode": "01",
-            "authCode": "K3C161",
-            "dateAndTime": "2019-12-25T00:00+00:00",
-            "merchantName": "ABC Store",
-            "acquiringInstitutionCountryCode": "USA",
-            "acquiringInstitutionCode": "23423423423",
-            "amount": "30.00",
-            "currencyCode": "USD",
-            "indicator": "CL"
-          },
-          "transactionFootPrint": {
-            "mcc": 5962,
-            "carbonEmissionInGrams": 27.98,
-            "carbonEmissionInOunces": 0.99,
-            "category": {
-              "mainCategory": "Shopping",
-              "subCategory": "Department Store",
-              "sector": "Specialty Retail & Services",
-              "sectorCode": "302"
-            }
-          }
-        },
-  ];
+ 
 
   const Item = ({title, amount, currency, emissions, date, category}) => {
     let iconName;
@@ -271,6 +307,9 @@ function HomeScreen({navigation, signOut, user}){
       color = "purple"
     }
 
+    const weightedEmissions = emissions/amount
+
+
     return(
         <View style={styles.transactionCard}>
                 <View style={styles.left}>
@@ -285,19 +324,37 @@ function HomeScreen({navigation, signOut, user}){
                     <View>
                     <Text style={styles.merchantText}>{title}</Text>
                     <Text>{currency} {amount}</Text>
+
                     </View>
                 </View>
                 <View style={styles.right}>
-                    <Text>{emissions}g</Text>
+                    <Text style={styles.emissionsText}>{emissions}g</Text>
+                    <Text style={weightedEmissions < 2 ? styles.greenText : styles.redText}>{weightedEmissions.toFixed(2)} g/{currency} </Text>
                 </View>
             </View>
           )
       
       };
 
-  const monthlyFootprint = ((DATA.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)).reduce((a,v) =>  a = a + v , 0 ))/1000
 
-  console.log(monthlyFootprint)
+  const monthlyFootprint = ((items.map((item)=>item.transactionFootPrint.carbonEmissionInGrams)).reduce((a,v) =>  a = a + v , 0 ))/1000
+  const monthlyAmountArray = (items.map((item)=>item.transactionMetadata.amount))
+  const currencyCode = (items.map((item)=>item.transactionMetadata.currencyCode))[0]
+
+	var numberArray = [];
+
+
+	length = monthlyAmountArray.length;
+	for (var i = 0; i < length; i++)
+		numberArray.push(parseFloat(monthlyAmountArray[i]));
+
+	const monthlyAmount = numberArray.reduce((a,v) =>  a = a + v , 0 )
+
+  const monthlyWeightedEmission = (monthlyFootprint)/(monthlyAmount)
+    
+  console.log(monthlyWeightedEmission)
+ 
+ // console.log(monthlyFootprint)
 
   return (
     //<HideKeyboard>
@@ -320,6 +377,8 @@ function HomeScreen({navigation, signOut, user}){
           </View>
         </View>
 
+        <View style={styles.homePage}>
+
         <View style={styles.container1}>
           <Text>
             Welcome {userFirstName} {"\n"}
@@ -333,7 +392,9 @@ function HomeScreen({navigation, signOut, user}){
 
         <View style={styles.container2}>
           <View style={styles.greyBox} >
-          <Text style={styles.carbonUsage}>{monthlyFootprint.toFixed(2)} Kg</Text>
+          <Text style={styles.carbonUsage}>{monthlyFootprint.toFixed(2)} kg</Text>
+          <Text style={styles.weightedEmissions}>{monthlyWeightedEmission.toFixed(3)} kg/{currencyCode}</Text>
+
           </View>
         </View> 
 
@@ -342,26 +403,28 @@ function HomeScreen({navigation, signOut, user}){
         <View style={styles.transactionsViewHeader}>
             <View style={styles.transactionsViewHeaderText}>
               <Text style={styles.headerText}>Transactions</Text>
-              <View style={styles.pointsView}>
+              {/* <View style={styles.pointsView}>
                 <View style={styles.pointsSymbol}><View style={styles.pointsSymbol2}></View></View>
                 <Text>{pointsTotal}</Text>
-              </View>
+              </View> */}
             </View>
         </View>
 
       <FlatList
-        data={DATA}
+        data={items}
         renderItem={({item}) => <Item title={item.transactionMetadata.merchantName} amount={item.transactionMetadata.amount} currency={item.transactionMetadata.currencyCode} emissions={item.transactionFootPrint.carbonEmissionInGrams} date={item.transactionMetadata.dateAndTime} category={item.transactionFootPrint.category.mainCategory}/>}
         keyExtractor={item => item.transactionMetadata.id}
       />
         </View>
 
-        <BannerAd       
+        </View>
+
+        {/* <BannerAd       
           unitId={adUnitId}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
           requestNonPersonalizedAdsOnly: true,
-        }} />
+        }} /> */}
 
         {/* Modals */}
 
@@ -428,9 +491,6 @@ function HomeScreen({navigation, signOut, user}){
 
 
 
-
-
-
 const styles = StyleSheet.create({
   authenticator:{
     width: 10,
@@ -448,10 +508,34 @@ const styles = StyleSheet.create({
 
   container0: {
     width: '100%',
-    height: '10%',
+    height: '12%',
     flexDirection: "row",
     justifyContent: "space-between",
+    position: 'absolute',
+    top: '5%',
+    
   },
+
+  homePage:{
+    position: 'absolute',
+    top: '13%',
+    width: '100%',
+    height: '95%',
+    alignItems: "center",
+    flexDirection:'column',
+    justifyContent: 'space-evenly',
+  },
+
+  analyticsPage:{
+    position: 'absolute',
+    top: '15%',
+    width: '100%',
+    height: '90%',
+    alignItems: "center",
+    flexDirection:'column',
+    justifyContent: 'space-evenly',
+  },
+
 
 
   container1: {
@@ -468,8 +552,6 @@ const styles = StyleSheet.create({
     right: '10%'
   },
 
-
-
   dateView: {
     position: 'relative',
     right: '10%'
@@ -483,7 +565,6 @@ const styles = StyleSheet.create({
   signUpLogo: {
     width: 100,
     height: 100,
-
   },
 
   signUpLogoView:{
@@ -501,23 +582,28 @@ const styles = StyleSheet.create({
 
   container2: {
     width: '80%',
-    height: "8%",
+    height: "10%",
     justifyContent: "center",
     alignItems: "center",
   },
 
   greyBox: {
     width: "80%",
-    height: 62.54,
+    height: 80,
     borderRadius: 20.85,
     backgroundColor: "#E0E0E0",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    flexDirection: 'column'
   },
 
   carbonUsage: {
     fontSize: 44,
     color: "#00C2FF",
+  },
+
+  weightedEmissions: {
+    fontSize: 15
   },
 
   main: {
@@ -531,8 +617,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "10%",
     borderRadius: 20,
-    //  borderTopLeftRadius: 20,
-    //  borderTopRightRadius: 20,
     borderColor: "#00C2FF",
     borderWidth: 5,
      backgroundColor: "#00C2FF",
@@ -594,13 +678,6 @@ const styles = StyleSheet.create({
 
   },
 
-
-  transactionsView:{
-
-
-
-  },
-
   item: {
     backgroundColor: '#f9c2ff',
     padding: 20,
@@ -616,6 +693,15 @@ const styles = StyleSheet.create({
 
   transactionCard:{
     width: "100%",
+    height: 80,
+    backgroundColor: "#E0E0E0",
+    borderRadius: 20,
+    flexDirection: 'row',
+    marginVertical: 8
+  },
+
+  analyticsTransactionCard:{
+    width: "90%",
     height: 80,
     backgroundColor: "#E0E0E0",
     borderRadius: 20,
@@ -642,7 +728,7 @@ const styles = StyleSheet.create({
   },
 
   middle:{
-    width: '45%',
+    width: '40%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'flex-start'
@@ -654,11 +740,25 @@ const styles = StyleSheet.create({
   },
 
   right:{
-        width: '20%',
+        width: '25%',
         height: '100%',
       //  backgroundColor: 'red',
         justifyContent: 'center',
         alignItems: 'center'
+  },
+
+
+  emissionsText:{
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+
+  greenText:{
+    color: 'green'
+  },
+
+  redText:{
+    color: 'red'
   },
 
   instructionsModalView: {
@@ -803,31 +903,54 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-
-  cardScreenText:{
-   fontSize: 25,
-   textAlign: 'center',
-  },
-
   instructionsText:{
     fontSize: 11,
     textAlign: 'center',
-
    },
 
-
-  comingSoon:{
+   comingSoon:{
     fontSize: 25,
     textAlign: 'center',
     fontWeight: 'bold',
     paddingTop: '10%'
-   }
+   },
 
+cardScreenText:{
+   fontSize: 25,
+   textAlign: 'center',
+  },
 
+  barChartView:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: "90%",
+    height: 250,
+  },
+
+  smallCircle:{
+    width: 45,
+    height: 45,
+    borderRadius: '30%',
+    backgroundColor: 'yellow',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  iconLabels:{
+    flexDirection: "row",
+    width: '90%',
+    height: '8%',
+    justifyContent: 'space-evenly',
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+
+  cardTitleText:{
+    fontSize: 15,
+    fontWeight: 'bold',
+  }
 
 });
-
-
 
 
 const signUpConfig = {
@@ -875,42 +998,309 @@ const signUpConfig = {
 
 const Stack = createNativeStackNavigator()
 
-const CardScreen = ({navigation, route}) => {
-  return(
-<SafeAreaView >
+function ChartScreen({navigation, route}){
 
-        <Text style={styles.comingSoon}>
-          Coming Soon...{'\n'}{'\n'}
-        </Text>
-        <Text style={styles.cardScreenText}>
-          Earn crypto for spending sustainbly and store in your Wallet{'\n'}{'\n'}
-          Add FIAT to your wallet{'\n'}{'\n'}
-          Exchange crypto to FIAT and other crypto{'\n'}{'\n'}
-          Purchase with crypto
-        </Text>
-
-</SafeAreaView>
+const currencyCode= items.map((p)=>p.transactionMetadata.currencyCode)
 
 
-  )
+  useEffect(()=>{
+    shoppingFilter()
+    transportationFilter()
+    healthFilter()
+    homeFilter()
+    foodFilter()
+    governmentFilter()
+    leisureFilter()
+  }, [items])
 
-}
+  const [shoppingFootprint, setShoppingFootprint] = useState(0);
+  const [transportationFootprint, setTransportationFootprint] = useState(0);
+  const [healthFootprint, setHealthFootprint] = useState(0);
+  const [homeFootprint, setHomeFootprint] = useState(0);
+  const [foodFootprint, setFoodFootprint] = useState(0);
+  const [governmentFootprint, setGovernmentFootprint] = useState(0);
+  const [leisureFootprint, setLeisureFootprint] = useState(0);
+
+
+  const shoppingFilter = () => {
+    let shoppingTransactions = items.filter(transaction => transaction.transactionFootPrint.category.mainCategory === "Shopping");
+    let shoppingFootprintArray = shoppingTransactions.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)
+    let shoppingTotal = shoppingFootprintArray.reduce((a,v) =>  a = a + v , 0 );
+    setShoppingFootprint(shoppingTotal);
+  }
+
+  const transportationFilter = () => {
+    let transportationTransactions = items.filter(transaction => transaction.transactionFootPrint.category.mainCategory === "Transportation");
+    let transportationFootprintArray = transportationTransactions.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)
+    let transportationTotal = transportationFootprintArray.reduce((a,v) =>  a = a + v , 0 );
+    setTransportationFootprint(transportationTotal);
+  }
+
+  const healthFilter = () => {
+    let healthTransactions = items.filter(transaction => transaction.transactionFootPrint.category.mainCategory === "Health & Beauty");
+    let healthFootprintArray = healthTransactions.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)
+    let healthTotal = healthFootprintArray.reduce((a,v) =>  a = a + v , 0 );
+    setHealthFootprint(healthTotal);
+  }
+
+  const homeFilter = () => {
+    let homeTransactions = items.filter(transaction => transaction.transactionFootPrint.category.mainCategory === "Home & Garden");
+    let homeFootprintArray = homeTransactions.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)
+    let homeTotal = homeFootprintArray.reduce((a,v) =>  a = a + v , 0 );
+    setHomeFootprint(homeTotal);
+  }
+
+  const foodFilter = () => {
+    let foodTransactions = items.filter(transaction => transaction.transactionFootPrint.category.mainCategory === "Food & Beverages");
+    let foodFootprintArray = foodTransactions.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)
+    let foodTotal = foodFootprintArray.reduce((a,v) =>  a = a + v , 0 );
+    setFoodFootprint(foodTotal);
+  }
+
+  const governmentFilter = () => {
+    let governmentTransactions = items.filter(transaction => transaction.transactionFootPrint.category.mainCategory === "Government Services");
+    let governmentFootprintArray = governmentTransactions.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)
+    let governmentTotal = governmentFootprintArray.reduce((a,v) =>  a = a + v , 0 );
+    setGovernmentFootprint(governmentTotal);
+  }
+
+  const leisureFilter = () => {
+    let leisureTransactions = items.filter(transaction => transaction.transactionFootPrint.category.mainCategory === "Leisure & Entertainment");
+    let leisureFootprintArray = leisureTransactions.map((p)=>p.transactionFootPrint.carbonEmissionInGrams)
+    let leisureTotal = leisureFootprintArray.reduce((a,v) =>  a = a + v , 0 );
+    setLeisureFootprint(leisureTotal);
+  }
+
+  const data=[ {value:shoppingFootprint, frontColor: "blue"}, {value:transportationFootprint, frontColor: "green"}, {value:healthFootprint, frontColor: "red"}, {value:homeFootprint, frontColor: "orange"}, {value:foodFootprint, frontColor: "black"}, {value:governmentFootprint, frontColor: "brown"}, {value:leisureFootprint, frontColor: "purple"} ]
+
+
+  const getFootprints = items.map((p)=>p.transactionFootPrint)
+  const amountArray =  (items.map((p)=>p.transactionMetadata.amount)).map(Number)
+  const transactionId = items.map((p)=>p.transactionMetadata.id)
+  const date = items.map((p)=>p.transactionMetadata.dateAndTime)
+  const category = items.map((p)=>p.transactionFootPrint.category.mainCategory)
+  const merchantName = items.map((p)=>p.transactionMetadata.merchantName)
+  const amount = items.map((p)=>p.transactionMetadata.amount)
+  const currency = items.map((p)=>p.transactionMetadata.currencyCode)
+   
+
+ 
+  const footprintArray = items.map((value, index) => {
+
+    let iconName;
+    let color;
+    if (value.transactionFootPrint.category.mainCategory==="Shopping"){
+      iconName= "cart-outline"
+      color = "blue"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Transportation"){
+      iconName= "car-outline"
+      color = "green"
+
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Health & Beauty"){
+      iconName= "medkit-outline"
+      color="red"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Home & Garden"){
+      iconName= "home-outline"
+      color = "orange"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Food & Beverages"){
+      iconName= "fast-food-outline"
+      color="black"
+
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Government Services"){
+      iconName= "people-outline"
+      color="brown"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Leisure & Entertainment"){
+      iconName= "game-controller-outline"
+      color = "purple"
+    }
+
+
+    return {
+      id: (value.transactionMetadata.id),
+      footprint: (value.transactionFootPrint.carbonEmissionInGrams),
+      category: value.transactionFootPrint.category.mainCategory,
+      iconName: iconName,
+      merchantName: value.transactionMetadata.merchantName,
+      amount: value.transactionMetadata.amount,
+      date: value.transactionMetadata.dateAndTime,
+      currency: value.transactionMetadata.currencyCode,
+      color: color
+    };
+  });
+
+
+  const weightedEmissionsArray = items.map((value, index) => {
+    let iconName;
+    let color;
+    if (value.transactionFootPrint.category.mainCategory==="Shopping"){
+      iconName= "cart-outline"
+      color = "blue"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Transportation"){
+      iconName= "car-outline"
+      color = "green"
+
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Health & Beauty"){
+      iconName= "medkit-outline"
+      color="red"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Home & Garden"){
+      iconName= "home-outline"
+      color = "orange"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Food & Beverages"){
+      iconName= "fast-food-outline"
+      color="black"
+
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Government Services"){
+      iconName= "people-outline"
+      color="brown"
+    }
+    else if (value.transactionFootPrint.category.mainCategory==="Leisure & Entertainment"){
+      iconName= "game-controller-outline"
+      color = "purple"
+    }
+
+    console.log(value.transactionFootPrint.carbonEmissionInGrams)
+
+
+    return {
+      id: value.transactionMetadata.id,
+      footprint: value.transactionFootPrint.carbonEmissionInGrams,
+      result: (value.transactionFootPrint.carbonEmissionInGrams)/(value.transactionMetadata.amount) ,
+      category: value.transactionFootPrint.category.mainCategory,
+      iconName: iconName ,
+      merchantName: value.transactionMetadata.merchantName,
+      amount: value.transactionMetadata.amount,
+      date: value.transactionMetadata.dateAndTime,
+      currency: value.transactionMetadata.currencyCode,
+      color: color
+    };
+  });
+
+  
+
+  const highestEmission = footprintArray.reduce((prev, current) => {
+    return (prev.footprint > current.footprint) ? prev : current;
+  });
+
+
+  const highestEmissionWeightedEmission = highestEmission.footprint/highestEmission.amount
+
+
+  const highestWeightedEmission = weightedEmissionsArray.reduce((prev, current) => {
+    return (prev.result > current.result) ? prev : current;
+  });
+
+  const highestWeightedEmissionWeightedEmission = highestWeightedEmission.footprint/highestWeightedEmission.amount
 
 
 
-const ChartScreen = ({navigation, route}) => {
-  return(
-    <SafeAreaView>
-    <Text style={styles.comingSoon}>
-      Coming Soon...{'\n'}{'\n'}
-    </Text>
-    <Text style={styles.cardScreenText}>
-      Gain greater insight into your carbon footprint{'\n'}{'\n'}
-      Spot trends{'\n'}{'\n'}
-      Oxi will recommend ways to improve your spending
-    </Text>
-    </SafeAreaView>
-  )
+return(
+  <SafeAreaView style={styles.centering}>
+
+        <View style={styles.container0}>
+          <Image
+            style={styles.tinyLogo}
+            source={require("./assets/logo.png")}
+          />
+
+          <View style={styles.menu}>
+            <Pressable
+              onPress={() => {
+                setMenuModalVisible(true);
+              }}
+            >
+              <Icon name="menu" size={35} color="black" />
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.analyticsPage}>
+
+        <Text style={styles.cardTitleText}>Categories</Text>
+
+        <View style={styles.iconLabels}>
+        <View style={[styles.circle, {backgroundColor: 'blue'}]}><IonIcon name={'cart-outline'} size={25} color={"white"}/></View>
+        <View style={[styles.circle, {backgroundColor: 'green'}]}><IonIcon name={'car-outline'} size={25} color={"white"}/></View>
+        <View style={[styles.circle, {backgroundColor: 'red'}]}><IonIcon name={'medkit-outline'} size={25} color={"white"}/></View>
+        <View style={[styles.circle, {backgroundColor: 'orange'}]}><IonIcon name={'home-outline'} size={25} color={"white"}/></View>
+        <View style={[styles.circle, {backgroundColor: 'black'}]}><IonIcon name={'fast-food-outline'} size={25} color={"white"}/></View>
+        <View style={[styles.circle, {backgroundColor: 'brown'}]}><IonIcon name={'people-outline'} size={25} color={"white"}/></View>
+        <View style={[styles.circle, {backgroundColor: 'purple'}]}><IonIcon name={'game-controller-outline'} size={25} color={"white"}/></View>
+      </View>
+
+        <View style={styles.barChartView}>
+        <BarChart 
+          data = {data} 
+          roundedTop
+          width={300}
+          barWidth={18}
+          />
+        </View>
+
+
+
+      <Text style={styles.cardTitleText}>Highest Emission Transaction</Text>
+ 
+      <View style={styles.analyticsTransactionCard}>
+                <View style={styles.left}>
+                    <Text>{JSON.stringify(highestEmission.date).substring(9,11)}/{JSON.stringify(highestEmission.date).substring(6,8)}</Text>
+                    <View style={[styles.circle, {backgroundColor: highestEmission.color}]}>
+                    
+                        <IonIcon name={highestEmission.iconName} size={25} color={"white"}/>
+                      
+                    </View>
+                </View>
+                <View style={styles.middle}>
+                    <View>
+                    <Text style={styles.merchantText}>{highestEmission.merchantName}</Text>
+                    <Text>{highestEmission.currency} {highestEmission.amount}</Text>
+
+                    </View>
+                </View>
+                <View style={styles.right}>
+                    <Text style={styles.emissionsText}>{highestEmission.footprint}g</Text>
+                    <Text>{highestEmissionWeightedEmission.toFixed(2)} g/{highestEmission.currency} </Text>
+                </View>
+            </View> 
+
+            <Text style={styles.cardTitleText}>Highest Emission per {currencyCode[0]} Transaction</Text>
+
+            <View style={styles.analyticsTransactionCard}>
+                <View style={styles.left}>
+                    <Text>{JSON.stringify(highestWeightedEmission.date).substring(9,11)}/{JSON.stringify(highestWeightedEmission.date).substring(6,8)}</Text>
+                    <View style={[styles.circle, {backgroundColor: highestWeightedEmission.color}]}>
+                    
+                        <IonIcon name={highestWeightedEmission.iconName} size={25} color={"white"}/>
+                      
+                    </View>
+                </View>
+                <View style={styles.middle}>
+                    <View>
+                    <Text style={styles.merchantText}>{highestWeightedEmission.merchantName}</Text>
+                    <Text>{highestWeightedEmission.currency} {highestWeightedEmission.amount}</Text>
+
+                    </View>
+                </View>
+                <View style={styles.right}>
+                    <Text style={styles.emissionsText}>{highestWeightedEmission.footprint}g</Text>
+                    <Text>{highestWeightedEmissionWeightedEmission.toFixed(2)} g/{highestWeightedEmission.currency} </Text>
+                </View>
+            </View> 
+
+
+          </View>
+  </SafeAreaView>
+)
 }
 
 const MyTheme = {
@@ -921,6 +1311,8 @@ const MyTheme = {
   },
 };
 
+
+
 const MyStack = () => {
   return (
     <NavigationContainer theme={MyTheme}>
@@ -929,9 +1321,7 @@ const MyStack = () => {
        screenOptions={{
         headerShown: false,
       }}
-
       >
-
         <Tab.Screen name="Wallet" component={CardScreen}  options={{
             tabBarIcon:({color,size})=>(
               <Icon name="credit-card" size={35} color="black"/>

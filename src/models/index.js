@@ -4,11 +4,12 @@ import { schema } from './schema';
 
 
 
-const { Points, ExampleItem, Fuel, Electricity, Transport, RawMaterials, Processes, Logistics, Basket, Materials, Item } = initSchema(schema);
+const { Products, Points, Item, Fuel, Electricity, Transport, RawMaterials, Processes, Logistics, Basket, Materials } = initSchema(schema);
 
 export {
+  Products,
   Points,
-  ExampleItem,
+  Item,
   Fuel,
   Electricity,
   Transport,
@@ -16,6 +17,5 @@ export {
   Processes,
   Logistics,
   Basket,
-  Materials,
-  Item
+  Materials
 };

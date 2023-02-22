@@ -2,11 +2,15 @@ import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled } from "@aws-amplify/datastore";
 
+type ProductsMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type PointsMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type ExampleItemMetaData = {
+type ItemMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -42,8 +46,38 @@ type MaterialsMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type ItemMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+type EagerProducts = {
+  readonly id: string;
+  readonly Barcode?: string | null;
+  readonly Merchant?: string | null;
+  readonly Name?: string | null;
+  readonly Price?: string | null;
+  readonly Material?: string | null;
+  readonly Weight?: string | null;
+  readonly Category?: string | null;
+  readonly Carbon?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyProducts = {
+  readonly id: string;
+  readonly Barcode?: string | null;
+  readonly Merchant?: string | null;
+  readonly Name?: string | null;
+  readonly Price?: string | null;
+  readonly Material?: string | null;
+  readonly Weight?: string | null;
+  readonly Category?: string | null;
+  readonly Carbon?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Products = LazyLoading extends LazyLoadingDisabled ? EagerProducts : LazyProducts
+
+export declare const Products: (new (init: ModelInit<Products, ProductsMetaData>) => Products) & {
+  copyOf(source: Products, mutator: (draft: MutableModel<Products, ProductsMetaData>) => MutableModel<Products, ProductsMetaData> | void): Products;
 }
 
 type EagerPoints = {
@@ -68,7 +102,7 @@ export declare const Points: (new (init: ModelInit<Points, PointsMetaData>) => P
   copyOf(source: Points, mutator: (draft: MutableModel<Points, PointsMetaData>) => MutableModel<Points, PointsMetaData> | void): Points;
 }
 
-type EagerExampleItem = {
+type EagerItem = {
   readonly id: string;
   readonly Barcode?: string | null;
   readonly Merchant?: string | null;
@@ -77,11 +111,12 @@ type EagerExampleItem = {
   readonly Material?: string | null;
   readonly Weight?: string | null;
   readonly Carbon?: string | null;
+  readonly Category?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-type LazyExampleItem = {
+type LazyItem = {
   readonly id: string;
   readonly Barcode?: string | null;
   readonly Merchant?: string | null;
@@ -90,14 +125,15 @@ type LazyExampleItem = {
   readonly Material?: string | null;
   readonly Weight?: string | null;
   readonly Carbon?: string | null;
+  readonly Category?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-export declare type ExampleItem = LazyLoading extends LazyLoadingDisabled ? EagerExampleItem : LazyExampleItem
+export declare type Item = LazyLoading extends LazyLoadingDisabled ? EagerItem : LazyItem
 
-export declare const ExampleItem: (new (init: ModelInit<ExampleItem, ExampleItemMetaData>) => ExampleItem) & {
-  copyOf(source: ExampleItem, mutator: (draft: MutableModel<ExampleItem, ExampleItemMetaData>) => MutableModel<ExampleItem, ExampleItemMetaData> | void): ExampleItem;
+export declare const Item: (new (init: ModelInit<Item, ItemMetaData>) => Item) & {
+  copyOf(source: Item, mutator: (draft: MutableModel<Item, ItemMetaData>) => MutableModel<Item, ItemMetaData> | void): Item;
 }
 
 type EagerFuel = {
@@ -264,6 +300,7 @@ type EagerBasket = {
   readonly Material?: string | null;
   readonly Carbon?: string | null;
   readonly owner?: string | null;
+  readonly Category?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -278,6 +315,7 @@ type LazyBasket = {
   readonly Material?: string | null;
   readonly Carbon?: string | null;
   readonly owner?: string | null;
+  readonly Category?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -308,30 +346,4 @@ export declare type Materials = LazyLoading extends LazyLoadingDisabled ? EagerM
 
 export declare const Materials: (new (init: ModelInit<Materials, MaterialsMetaData>) => Materials) & {
   copyOf(source: Materials, mutator: (draft: MutableModel<Materials, MaterialsMetaData>) => MutableModel<Materials, MaterialsMetaData> | void): Materials;
-}
-
-type EagerItem = {
-  readonly id: string;
-  readonly Barcode?: string | null;
-  readonly Name?: string | null;
-  readonly Manufacturer?: string | null;
-  readonly Carbon?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyItem = {
-  readonly id: string;
-  readonly Barcode?: string | null;
-  readonly Name?: string | null;
-  readonly Manufacturer?: string | null;
-  readonly Carbon?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type Item = LazyLoading extends LazyLoadingDisabled ? EagerItem : LazyItem
-
-export declare const Item: (new (init: ModelInit<Item, ItemMetaData>) => Item) & {
-  copyOf(source: Item, mutator: (draft: MutableModel<Item, ItemMetaData>) => MutableModel<Item, ItemMetaData> | void): Item;
 }
